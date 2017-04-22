@@ -19,7 +19,7 @@ func urlencode(v []KV) []byte {
 	}
 	var buf bytes.Buffer
 	for _, v := range v {
-		prefix := url.QueryEscape(v.Key) + "="
+		prefix := v.Key + "="
 
 		if buf.Len() > 0 {
 			buf.WriteByte('&')
