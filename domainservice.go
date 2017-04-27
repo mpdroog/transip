@@ -54,13 +54,12 @@ func (c *DomainService) SetDNSEntries(domain string, entries []soap.DomainDNSent
 	xml := ``
 
 	for idx, entry := range entries {
-		offset := idx + 1
 		xml = xml + fmt.Sprintf(entryTemplate, entry.Name, entry.Expire, entry.Type, entry.Content)
 		params = append(params, []signature.KV{
-			signature.KV{fmt.Sprintf("%d[0][name]", offset), entry.Name},
-			signature.KV{fmt.Sprintf("%d[0][expire]", offset), strconv.Itoa(entry.Expire)},
-			signature.KV{fmt.Sprintf("%d[0][type]", offset), entry.Type},
-			signature.KV{fmt.Sprintf("%d[0][content]", offset), entry.Content},
+			signature.KV{fmt.Sprintf("1[%d][name]", idx), entry.Name},
+			signature.KV{fmt.Sprintf("1[%d][expire]", idx), strconv.Itoa(entry.Expire)},
+			signature.KV{fmt.Sprintf("1[%d][type]", idx), entry.Type},
+			signature.KV{fmt.Sprintf("1[%d][content]", idx), entry.Content},
 		}...)
 	}
 
