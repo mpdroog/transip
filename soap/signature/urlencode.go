@@ -3,6 +3,7 @@ package signature
 import (
 	"bytes"
 	"net/url"
+	"strings"
 )
 
 type KV struct {
@@ -25,7 +26,7 @@ func urlencode(v []KV) []byte {
 			buf.WriteByte('&')
 		}
 		buf.WriteString(prefix)
-		buf.WriteString(url.QueryEscape(v.Value))
+		buf.WriteString(strings.Replace(url.QueryEscape(v.Value), "+", "%20", -1))
 	}
 	return buf.Bytes()
 }
