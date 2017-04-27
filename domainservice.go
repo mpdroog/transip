@@ -67,7 +67,10 @@ func (c *DomainService) SetDNSEntries(domain string, entries []soap.DomainDNSent
 		Service:     domainService,
 		ExtraParams: params,
 		Method:      "setDnsEntries",
-		Body:        fmt.Sprintf(`<ns1:setDnsEntries><domainName xsi:type="xsd:string">%s</domainName><dnsEntries SOAP-ENC:arrayType="ns1:DnsEntry[1]" xsi:type="ns1:ArrayOfDnsEntry">%s</dnsEntries></ns1:setDnsEntries>`, domain, xml),
+		Body:        fmt.Sprintf(
+			`<ns1:setDnsEntries><domainName xsi:type="xsd:string">%s</domainName><dnsEntries SOAP-ENC:arrayType="ns1:DnsEntry[%d]" xsi:type="ns1:ArrayOfDnsEntry">%s</dnsEntries></ns1:setDnsEntries>`,
+			domain, len(entries), xml,
+		),
 	})
 	if e != nil {
 		return e
