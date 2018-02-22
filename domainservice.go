@@ -31,7 +31,7 @@ func (c *DomainService) Domain(name string) (*soap.Domain, error) {
 	rawbody, e := soap.Lookup(c.Creds, soap.Request{
 		Service: domainService,
 		ExtraParams: []signature.KV{
-			signature.KV{Key: "0", Value: name},
+			{Key: "0", Value: name},
 		},
 		Method: "getInfo",
 		Body:   fmt.Sprintf(`<ns1:getInfo><domainName xsi:type="xsd:string">%s</domainName></ns1:getInfo>`, name),
@@ -49,17 +49,17 @@ func (c *DomainService) SetDNSEntries(domain string, entries []soap.DomainDNSent
 	entryTemplate := `<item xsi:type="ns1:DnsEntry"><name xsi:type="xsd:string">%s</name><expire xsi:type="xsd:int">%d</expire><type xsi:type="xsd:string">%s</type><content xsi:type="xsd:string">%s</content></item>`
 
 	params := []signature.KV{
-		signature.KV{Key: "0", Value: domain},
+		{Key: "0", Value: domain},
 	}
 	xml := ``
 
 	for idx, entry := range entries {
 		xml = xml + fmt.Sprintf(entryTemplate, entry.Name, entry.Expire, entry.Type, entry.Content)
 		params = append(params, []signature.KV{
-			signature.KV{fmt.Sprintf("1[%d][name]", idx), entry.Name},
-			signature.KV{fmt.Sprintf("1[%d][expire]", idx), strconv.Itoa(entry.Expire)},
-			signature.KV{fmt.Sprintf("1[%d][type]", idx), entry.Type},
-			signature.KV{fmt.Sprintf("1[%d][content]", idx), entry.Content},
+			{fmt.Sprintf("1[%d][name]", idx), entry.Name},
+			{fmt.Sprintf("1[%d][expire]", idx), strconv.Itoa(entry.Expire)},
+			{fmt.Sprintf("1[%d][type]", idx), entry.Type},
+			{fmt.Sprintf("1[%d][content]", idx), entry.Content},
 		}...)
 	}
 
@@ -67,7 +67,7 @@ func (c *DomainService) SetDNSEntries(domain string, entries []soap.DomainDNSent
 		Service:     domainService,
 		ExtraParams: params,
 		Method:      "setDnsEntries",
-		Body:        fmt.Sprintf(
+		Body: fmt.Sprintf(
 			`<ns1:setDnsEntries><domainName xsi:type="xsd:string">%s</domainName><dnsEntries SOAP-ENC:arrayType="ns1:DnsEntry[%d]" xsi:type="ns1:ArrayOfDnsEntry">%s</dnsEntries></ns1:setDnsEntries>`,
 			domain, len(entries), xml,
 		),

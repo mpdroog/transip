@@ -6,21 +6,9 @@ import (
 	"crypto"
 	"crypto/rsa"
 	"crypto/sha512"
-	"crypto/x509"
 	"encoding/base64"
-	"encoding/pem"
-	"errors"
 	"net/url"
 )
-
-// Read PCK1 bytes into RSA privkey
-func privateKey(key []byte) (*rsa.PrivateKey, error) {
-	block, rest := pem.Decode(key)
-	if block == nil || len(rest) > 0 {
-		return nil, errors.New("pem.Decode fail, rest=" + string(rest))
-	}
-	return x509.ParsePKCS1PrivateKey(block.Bytes)
-}
 
 // Creates a digest of the given data, with an asn1 header.
 // $digest = self::_sha512Asn1(self::_encodeParameters($parameters));
@@ -40,17 +28,10 @@ func sha512ASN1(data []byte) []byte {
 	return append(asn1, h.Sum(nil)...)
 }
 
-func Sign(privKey string, params []KV) (string, error) {
+func Sign(privKey *rsa.PrivateKey, params []KV) (string, error) {
 	asn1 := sha512ASN1(urlencode(params))
 
-	//privKey = strings.Replace(privKey, "\r\n", "", -1)
-	//privKey = strings.Replace(privKey, "\r", "\n", -1)
-	rsaKey, e := privateKey([]byte(privKey))
-	if e != nil {
-		return "", e
-	}
-
-	sig, e := rsa.SignPKCS1v15(nil, rsaKey, crypto.Hash(0), asn1)
+	sig, e := rsa.SignPKCS1v15(nil, privKey, crypto.Hash(0), asn1)
 	if e != nil {
 		return "", e
 	}
