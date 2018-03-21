@@ -46,22 +46,22 @@ func (c *DomainService) Domain(name string) (*soap.Domain, error) {
 }
 
 func (c *DomainService) Domains(names []string) (*soap.Domains, error) {
-    entryTemplate := `<item xsi:type="xsd:string">%s</item>`
-    params := []signature.KV{}
-    xml := ``
+	entryTemplate := `<item xsi:type="xsd:string">%s</item>`
+	params := []signature.KV{}
+	xml := ``
 
-    for idx, v := range names {
-        xml = xml + fmt.Sprintf(entryTemplate, v)
-        params = append(params, []signature.KV{
-            {Key: fmt.Sprintf("0[%d]", idx), Value: v},
-        }...)
-    }
+	for idx, v := range names {
+		xml = xml + fmt.Sprintf(entryTemplate, v)
+		params = append(params, []signature.KV{
+			{Key: fmt.Sprintf("0[%d]", idx), Value: v},
+		}...)
+	}
 
 	rawbody, e := soap.Lookup(c.Creds, soap.Request{
-		Service: domainService,
+		Service:     domainService,
 		ExtraParams: params,
-		Method: "batchGetInfo",
-        Body:   fmt.Sprintf(`<ns1:batchGetInfo><domainNames SOAP-ENC:arrayType="xsd:string[%d]" xsi:type="ns1:ArrayOfString">%s</domainNames></ns1:batchGetInfo>`, len(names), xml),
+		Method:      "batchGetInfo",
+		Body:        fmt.Sprintf(`<ns1:batchGetInfo><domainNames SOAP-ENC:arrayType="xsd:string[%d]" xsi:type="ns1:ArrayOfString">%s</domainNames></ns1:batchGetInfo>`, len(names), xml),
 	})
 	if e != nil {
 		return nil, e
