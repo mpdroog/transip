@@ -1,6 +1,6 @@
 // Package signature creates a cookie signature to validate
 // a request for the TransIP API
-package signature
+package transip
 
 import (
 	"crypto"

@@ -1,7 +1,7 @@
 // Package soap implements SOAP-logic for the TransIP API.
 // decode.go contains the logic to convert the XML to the corresponding
 // datastructures
-package soap
+package transip
 
 import (
 	"bytes"

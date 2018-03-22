@@ -4,33 +4,30 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/mpdroog/transip/creds"
-	"github.com/mpdroog/transip/soap"
-	"github.com/mpdroog/transip/soap/signature"
 	"strconv"
 )
 
 const domainService = "DomainService"
 
 type DomainService struct {
-	Creds creds.Client
+	Creds Client
 }
 
-func (c *DomainService) DomainNames() (*soap.DomainNames, error) {
-	rawbody, e := soap.Lookup(c.Creds, soap.Request{Service: domainService, Method: "getDomainNames", Body: `<ns1:getDomainNames/>`})
+func (c *DomainService) DomainNames() (*DomainNames, error) {
+	rawbody, e := Lookup(c.Creds, Request{Service: domainService, Method: "getDomainNames", Body: `<ns1:getDomainNames/>`})
 	if e != nil {
 		return nil, e
 	}
 
-	domains := &soap.DomainNames{}
-	e = soap.Decode(rawbody, &domains)
+	domains := &DomainNames{}
+	e = Decode(rawbody, &domains)
 	return domains, e
 }
 
-func (c *DomainService) Domain(name string) (*soap.Domain, error) {
-	rawbody, e := soap.Lookup(c.Creds, soap.Request{
+func (c *DomainService) Domain(name string) (*Domain, error) {
+	rawbody, e := Lookup(c.Creds, Request{
 		Service: domainService,
-		ExtraParams: []signature.KV{
+		ExtraParams: []KV{
 			{Key: "0", Value: name},
 		},
 		Method: "getInfo",
@@ -40,24 +37,24 @@ func (c *DomainService) Domain(name string) (*soap.Domain, error) {
 		return nil, e
 	}
 
-	domain := &soap.Domain{}
-	e = soap.Decode(rawbody, &domain)
+	domain := &Domain{}
+	e = Decode(rawbody, &domain)
 	return domain, e
 }
 
-func (c *DomainService) Domains(names []string) ([]soap.Domain, error) {
+func (c *DomainService) Domains(names []string) ([]Domain, error) {
 	entryTemplate := `<item xsi:type="xsd:string">%s</item>`
-	params := []signature.KV{}
+	params := []KV{}
 	xml := ``
 
 	for idx, v := range names {
 		xml = xml + fmt.Sprintf(entryTemplate, v)
-		params = append(params, []signature.KV{
+		params = append(params, []KV{
 			{Key: fmt.Sprintf("0[%d]", idx), Value: v},
 		}...)
 	}
 
-	rawbody, e := soap.Lookup(c.Creds, soap.Request{
+	rawbody, e := Lookup(c.Creds, Request{
 		Service:     domainService,
 		ExtraParams: params,
 		Method:      "batchGetInfo",
@@ -67,22 +64,22 @@ func (c *DomainService) Domains(names []string) ([]soap.Domain, error) {
 		return nil, e
 	}
 
-	domains := &soap.Domains{}
-	e = soap.Decode(rawbody, &domains)
+	domains := &Domains{}
+	e = Decode(rawbody, &domains)
 	return domains.Domains, e
 }
 
-func (c *DomainService) SetDNSEntries(domain string, entries []soap.DomainDNSentry) error {
+func (c *DomainService) SetDNSEntries(domain string, entries []DomainDNSentry) error {
 	entryTemplate := `<item xsi:type="ns1:DnsEntry"><name xsi:type="xsd:string">%s</name><expire xsi:type="xsd:int">%d</expire><type xsi:type="xsd:string">%s</type><content xsi:type="xsd:string">%s</content></item>`
 
-	params := []signature.KV{
+	params := []KV{
 		{Key: "0", Value: domain},
 	}
 	xml := ``
 
 	for idx, entry := range entries {
 		xml = xml + fmt.Sprintf(entryTemplate, entry.Name, entry.Expire, entry.Type, entry.Content)
-		params = append(params, []signature.KV{
+		params = append(params, []KV{
 			{fmt.Sprintf("1[%d][name]", idx), entry.Name},
 			{fmt.Sprintf("1[%d][expire]", idx), strconv.Itoa(entry.Expire)},
 			{fmt.Sprintf("1[%d][type]", idx), entry.Type},
@@ -90,7 +87,7 @@ func (c *DomainService) SetDNSEntries(domain string, entries []soap.DomainDNSent
 		}...)
 	}
 
-	rawbody, e := soap.Lookup(c.Creds, soap.Request{
+	rawbody, e := Lookup(c.Creds, Request{
 		Service:     domainService,
 		ExtraParams: params,
 		Method:      "setDnsEntries",
