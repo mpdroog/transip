@@ -105,3 +105,21 @@ func (c *DomainService) SetDNSEntries(domain string, entries []DomainDNSentry) e
 	}
 	return nil
 }
+
+func (c *DomainService) CheckAvailability(name string) (string, error) {
+	rawbody, e := lookup(c.Creds, request{
+		Service: domainService,
+		ExtraParams: []kV{
+			{Key: "0", Value: name},
+		},
+		Method: "checkAvailability",
+		Body:   fmt.Sprintf(`<ns1:checkAvailability><domainName xsi:type="xsd:string">%s</domainName></ns1:checkAvailability>`, name),
+	})
+	if e != nil {
+		return "", e
+	}
+
+	availability := &availability{}
+	e = decode(rawbody, &availability)
+	return availability.Item, e
+}

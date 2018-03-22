@@ -23,6 +23,10 @@ type DomainNames struct {
 	Item []string `xml:"item"`
 }
 
+type availability struct {
+	Item string `xml:"return"`
+}
+
 type Domains struct {
 	Domains []Domain `xml:"item"`
 }
@@ -83,6 +87,12 @@ func decode(rawbody []byte, out interface{}) error {
 
 		switch se := tok.(type) {
 		case xml.StartElement:
+			if se.Name.Local == "checkAvailabilityResponse" {
+				// Start readin'!
+				if e := dec.DecodeElement(out, &se); e != nil {
+					return e
+				}
+			}
 			if se.Name.Local == "return" {
 				// Start readin'!
 				if e := dec.DecodeElement(out, &se); e != nil {

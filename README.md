@@ -5,6 +5,7 @@ Small library in Golang that implements:
 * DomainService/getInfo
 * DomainService/batchGetInfo
 * DomainService/setDnsEntries
+* DomainService/checkAvailability
 
 If you need other methods on the TransIP API be free to fork my
 code and I'll merge it with love. :)
@@ -110,5 +111,34 @@ func overWriteDnsEntries(username, privKeyPath, domain string) error {
 	domainService := transip.DomainService{creds}
 	err := domainService.SetDNSEntries(domain, recordSet)
 	return err
+}
+```
+
+Check availability of a domain
+```go
+package main
+
+import (
+	"github.com/mpdroog/transip"
+	"fmt"
+)
+
+func checkAvailability(username, privKeyPath, domain string) (string, error) {
+	creds := transip.Client{
+        Login:     username,
+        ReadWrite: false,
+    }
+    if err := creds.SetPrivateKeyFromPath(privKeyPath); err != nil {
+        return "", fmt.Errorf("could not load private key from path %s: %s",
+            privKeyPath, err)
+    }
+
+    domainService := transip.DomainService{creds}
+	res, err := domainService.CheckAvailability(domain)
+	if err != nil {
+		return "", err
+	}
+
+    return res, nil
 }
 ```
