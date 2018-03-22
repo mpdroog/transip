@@ -3,10 +3,10 @@ package transip
 import (
 	"bytes"
 	"crypto/rsa"
-	"encoding/base64"
-	"testing"
-	"encoding/pem"
 	"crypto/x509"
+	"encoding/base64"
+	"encoding/pem"
+	"testing"
 )
 
 func TestParamEncode(t *testing.T) {
@@ -69,12 +69,12 @@ func TestBase64(t *testing.T) {
 func TestSign(t *testing.T) {
 	expect := `3xhFhDsp1H2%2Ba4LidS2hXuQQjNmsxIGlEkgastg9jO5BRvqTLUXppAXjhieoq4P%2Bf8E5BF9%2FZ4SnYWKkQUvMbG%2BfoMnmK%2BGL6CwYeyn%2FLglZMNrFdoMw18PRH1iW3quvF2yxVcnCJXT%2FRwXUQu4TbH7f8kYH12R20hNI6HlDDx%2FQbLPtMyS9nMAmhhebtmjnutlmZS%2BCK%2Bh9jllaGcMiCorYGBD5aXHu%2FUdlsxmzSQ8acvtDa%2BfBkZ%2BDcvi%2B9fafzMCxd1OT5%2BP9vj93u1i9VmL0Bz3Z88Uj%2FxCnTXH0VdZZGyWuqKNNjawXs1wwoJ5%2FrDhMCyVdqt%2Fb8X2%2Bt%2F%2Bpww%3D%3D`
 	sig, e := Sign(privKey(), []KV{
-			{"__method", "getDomainNames"},
-			{"__service", "DomainService"},
-			{"__hostname", "api.transip.nl"},
-			{"__timestamp", "1492851509"},
-			{"__nonce", "58fb1b35916f25.33598874"},
-		})
+		{"__method", "getDomainNames"},
+		{"__service", "DomainService"},
+		{"__hostname", "api.transip.nl"},
+		{"__timestamp", "1492851509"},
+		{"__nonce", "58fb1b35916f25.33598874"},
+	})
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -113,6 +113,6 @@ u7Isy/Q8xjHsJG6KP2/pMvMG42lhB3b+GKSmxVM999U30SdgorE3Kw==
 -----END RSA PRIVATE KEY-----`)
 
 	block, _ := pem.Decode(keyContents)
-	privKey,_ := x509.ParsePKCS1PrivateKey(block.Bytes)
+	privKey, _ := x509.ParsePKCS1PrivateKey(block.Bytes)
 	return privKey
 }

@@ -24,7 +24,7 @@ type DomainNames struct {
 }
 
 type Domains struct {
-    Domains []Domain `xml:"item"`
+	Domains []Domain `xml:"item"`
 }
 
 type DomainNameserver struct {

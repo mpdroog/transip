@@ -4,13 +4,13 @@ package transip
 import (
 	"crypto/tls"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
-	"fmt"
-	"strconv"
 )
 
 const API_URL = "api.transip.nl"
@@ -29,10 +29,10 @@ func uniqid() string {
 }
 
 type request struct {
-	Service     string         // Service to call on TransIP side
-	ExtraParams []kV // Additional params for the signature-code
-	Body        string         // XML body to send in envelope
-	Method      string         // Method to call on service
+	Service     string // Service to call on TransIP side
+	ExtraParams []kV   // Additional params for the signature-code
+	Body        string // XML body to send in envelope
+	Method      string // Method to call on service
 }
 
 func lookup(c Client, in request) ([]byte, error) {
