@@ -26,7 +26,7 @@ import (
 	"fmt"
 )
 
-func printDomainInfo(username, privKeyPath string) {
+func printDomainInfo(username, privKeyPath string) error {
 	creds := creds.Client{
 		Login:     username,
 		ReadWrite: false,
@@ -42,6 +42,7 @@ func printDomainInfo(username, privKeyPath string) {
 		return err
 	}
 	fmt.Printf("\t%+v\n\n", domain)
+    return nil
 }
 ```
 
