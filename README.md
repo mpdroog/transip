@@ -22,12 +22,11 @@ package main
 
 import (
 	"github.com/mpdroog/transip"
-	"github.com/mpdroog/transip/creds"
 	"fmt"
 )
 
 func printDomainInfo(username, privKeyPath string) error {
-	creds := creds.Client{
+	creds := transip.Client{
 		Login:     username,
 		ReadWrite: false,
 	}
@@ -42,7 +41,7 @@ func printDomainInfo(username, privKeyPath string) error {
 		return err
 	}
 	fmt.Printf("\t%+v\n\n", domain)
-    return nil
+	return nil
 }
 ```
 
@@ -52,12 +51,11 @@ package main
 
 import (
 	"github.com/mpdroog/transip"
-	"github.com/mpdroog/transip/creds"
 	"fmt"
 )
 
 func printDomainNames(username, privKeyPath string) error {
-	creds := creds.Client{
+	creds := transip.Client{
 		Login:     username,
 		ReadWrite: false,
 	}
@@ -71,7 +69,7 @@ func printDomainNames(username, privKeyPath string) error {
 	if err != nil {
 		return err
 	}
-	domains, err := domainService.Domains(domainNames.Item)
+	domains, err := domainService.Domains(domainNames)
 	if err != nil {
 		return err
 	}
@@ -91,13 +89,11 @@ package main
 
 import (
 	"github.com/mpdroog/transip"
-	"github.com/mpdroog/transip/creds"
-	"github.com/mpdroog/transip/soap"
 	"fmt"
 )
 
 func overWriteDnsEntries(username, privKeyPath, domain string) error {
-	creds := creds.Client{
+	creds := transip.Client{
 		Login:     username,
 		ReadWrite: false,
 	}
@@ -107,7 +103,7 @@ func overWriteDnsEntries(username, privKeyPath, domain string) error {
 	}
 
 	// 360 = 6min (TTL in seconds)
-	recordSet := []soap.DomainDNSentry{
+	recordSet := []transip.DomainDNSentry{
 		{Name: "@", Expire: 360, Type: "A", Content: "127.0.0.1"},
 	}
 

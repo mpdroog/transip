@@ -13,7 +13,7 @@ type DomainService struct {
 	Creds Client
 }
 
-func (c *DomainService) DomainNames() (*DomainNames, error) {
+func (c *DomainService) DomainNames() ([]string, error) {
 	rawbody, e := Lookup(c.Creds, Request{Service: domainService, Method: "getDomainNames", Body: `<ns1:getDomainNames/>`})
 	if e != nil {
 		return nil, e
@@ -21,7 +21,7 @@ func (c *DomainService) DomainNames() (*DomainNames, error) {
 
 	domains := &DomainNames{}
 	e = Decode(rawbody, &domains)
-	return domains, e
+	return domains.Item, e
 }
 
 func (c *DomainService) Domain(name string) (*Domain, error) {
