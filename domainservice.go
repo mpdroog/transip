@@ -45,7 +45,7 @@ func (c *DomainService) Domain(name string) (*soap.Domain, error) {
 	return domain, e
 }
 
-func (c *DomainService) Domains(names []string) (*soap.Domains, error) {
+func (c *DomainService) Domains(names []string) ([]soap.Domain, error) {
 	entryTemplate := `<item xsi:type="xsd:string">%s</item>`
 	params := []signature.KV{}
 	xml := ``
@@ -69,7 +69,7 @@ func (c *DomainService) Domains(names []string) (*soap.Domains, error) {
 
 	domains := &soap.Domains{}
 	e = soap.Decode(rawbody, &domains)
-	return domains, e
+	return domains.Domains, e
 }
 
 func (c *DomainService) SetDNSEntries(domain string, entries []soap.DomainDNSentry) error {

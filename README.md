@@ -75,7 +75,7 @@ func printDomainNames(username, privKeyPath string) error {
 		return err
 	}
 	fmt.Printf("Managed domains:\n")
-	for _, domain := range domains.Domains {
+	for _, domain := range domains {
 		fmt.Printf("★ %s\n", domain.Name)
 		fmt.Printf("\t%+v\n\n", domain)
 	}
