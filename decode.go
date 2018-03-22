@@ -69,7 +69,7 @@ type Domain struct {
 
 // Convert rawbody to XML and subtract the 'body' from the
 // SOAP-envelope into the struct given with out
-func Decode(rawbody []byte, out interface{}) error {
+func decode(rawbody []byte, out interface{}) error {
 	dec := xml.NewDecoder(bytes.NewReader(rawbody))
 
 	for {

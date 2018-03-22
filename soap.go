@@ -28,14 +28,14 @@ func uniqid() string {
 	)
 }
 
-type Request struct {
+type request struct {
 	Service     string         // Service to call on TransIP side
-	ExtraParams []KV // Additional params for the signature-code
+	ExtraParams []kV // Additional params for the signature-code
 	Body        string         // XML body to send in envelope
 	Method      string         // Method to call on service
 }
 
-func Lookup(c Client, in Request) ([]byte, error) {
+func lookup(c Client, in request) ([]byte, error) {
 	raw := fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
 	xmlns:ns1="%s" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -83,14 +83,14 @@ func Lookup(c Client, in Request) ([]byte, error) {
 	})
 
 	kv := in.ExtraParams
-	kv = append(kv, []KV{
+	kv = append(kv, []kV{
 		{"__method", in.Method},
 		{"__service", in.Service},
 		{"__hostname", API_URL},
 		{"__timestamp", now},
 		{"__nonce", nonce}}...,
 	)
-	sig, e := Sign(c.PrivateKey, kv)
+	sig, e := sign(c.PrivateKey, kv)
 	if e != nil {
 		return []byte{}, e
 	}

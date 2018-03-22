@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-type KV struct {
+type kV struct {
 	Key   string
 	Value string
 }
@@ -14,7 +14,7 @@ type KV struct {
 // Encode encodes the values into ``URL encoded'' form
 // ("bar=baz&foo=quux") NOT sorted.
 // https://golang.org/src/net/url/url.go?s=24497:24528#L850
-func urlencode(v []KV) []byte {
+func urlencode(v []kV) []byte {
 	if v == nil {
 		return []byte{}
 	}

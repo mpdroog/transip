@@ -10,12 +10,12 @@ import (
 )
 
 func TestParamEncode(t *testing.T) {
-	in := []KV{
-		KV{"__method", "getDomainNames"},
-		KV{"__service", "DomainService"},
-		KV{"__hostname", "api.transip.nl"},
-		KV{"__timestamp", "1492760973"},
-		KV{"__nonce", "58f9b98ddd3999.86051758"},
+	in := []kV{
+		kV{"__method", "getDomainNames"},
+		kV{"__service", "DomainService"},
+		kV{"__hostname", "api.transip.nl"},
+		kV{"__timestamp", "1492760973"},
+		kV{"__nonce", "58f9b98ddd3999.86051758"},
 	}
 	expect := []byte(`__method=getDomainNames&__service=DomainService&__hostname=api.transip.nl&__timestamp=1492760973&__nonce=58f9b98ddd3999.86051758`)
 
