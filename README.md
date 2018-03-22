@@ -99,7 +99,7 @@ import (
 func overWriteDnsEntries(username, privKeyPath, domain string) error {
 	creds := creds.Client{
 		Login:     username,
-		ReadWrite: false,
+		ReadWrite: true,
 	}
 	if err := creds.SetPrivateKeyFromPath(privKeyPath); err != nil {
 		return fmt.Errorf("could not load private key from path %s: %s",
