@@ -70,7 +70,7 @@ func printDomainNames(username, privKeyPath string) error {
 	if err != nil {
 		return err
 	}
-	domains, err := domainService.Domains(domainNames)
+	domains, err := domainService.Domains(domainNames.Item)
 	if err != nil {
 		return err
 	}
