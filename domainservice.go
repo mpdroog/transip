@@ -19,7 +19,7 @@ func (c *DomainService) DomainNames() ([]string, error) {
 		return nil, e
 	}
 
-	domains := &DomainNames{}
+	domains := &domainNames{}
 	e = decode(rawbody, &domains)
 	return domains.Item, e
 }
