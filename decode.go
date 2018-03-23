@@ -72,13 +72,13 @@ type Domain struct {
 }
 
 type domainCheckResults struct {
-	Results	[]DomainCheckResult `xml:"item"`
+	Results []DomainCheckResult `xml:"item"`
 }
 
 type DomainCheckResult struct {
-	DomainName	string		`xml:"domainName"`
-	Status		string		`xml:"status"`
-	Actions		[]string	`xml:"actions>item"`
+	DomainName string   `xml:"domainName"`
+	Status     string   `xml:"status"`
+	Actions    []string `xml:"actions>item"`
 }
 
 // Convert rawbody to XML and subtract the 'body' from the
