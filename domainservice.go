@@ -123,3 +123,30 @@ func (c *DomainService) CheckAvailability(name string) (string, error) {
 	e = decode(rawbody, &availability)
 	return availability.Item, e
 }
+
+func (c *DomainService) BatchCheckAvailability(names []string) ([]DomainCheckResult, error) {
+	entryTemplate := `<item xsi:type="xsd:string">%s</item>`
+	params := []kV{}
+	xml := ``
+
+	for idx, v := range names {
+		xml = xml + fmt.Sprintf(entryTemplate, v)
+		params = append(params, []kV{
+			{Key: fmt.Sprintf("0[%d]", idx), Value: v},
+		}...)
+	}
+
+	rawbody, e := lookup(c.Creds, request{
+		Service:     domainService,
+		ExtraParams: params,
+		Method:      "batchCheckAvailability",
+		Body:        fmt.Sprintf(`<ns1:batchCheckAvailability soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><domainNames xsi:type="soap:ArrayOfstring" soapenc:arrayType="xsd:string[%d]">%s</domainNames></ns1:batchCheckAvailability>`, len(names), xml),
+	})
+	if e != nil {
+		return nil, e
+	}
+
+	dcResults := &domainCheckResults{}
+	e = decode(rawbody, &dcResults)
+	return dcResults.Results, e
+}

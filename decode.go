@@ -71,6 +71,16 @@ type Domain struct {
 	RenewalDate      string `xml:"renewalDate"`
 }
 
+type domainCheckResults struct {
+	Results	[]DomainCheckResult `xml:"item"`
+}
+
+type DomainCheckResult struct {
+	DomainName	string		`xml:"domainName"`
+	Status		string		`xml:"status"`
+	Actions		[]string	`xml:"actions>item"`
+}
+
 // Convert rawbody to XML and subtract the 'body' from the
 // SOAP-envelope into the struct given with out
 func decode(rawbody []byte, out interface{}) error {
