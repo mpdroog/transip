@@ -1,6 +1,6 @@
 // Package signature creates a cookie signature to validate
 // a request for the TransIP API
-package signature
+package transip
 
 import (
 	"crypto"
@@ -28,7 +28,7 @@ func sha512ASN1(data []byte) []byte {
 	return append(asn1, h.Sum(nil)...)
 }
 
-func Sign(privKey *rsa.PrivateKey, params []KV) (string, error) {
+func sign(privKey *rsa.PrivateKey, params []kV) (string, error) {
 	asn1 := sha512ASN1(urlencode(params))
 
 	sig, e := rsa.SignPKCS1v15(nil, privKey, crypto.Hash(0), asn1)

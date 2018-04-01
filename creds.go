@@ -1,4 +1,4 @@
-package creds
+package transip
 
 import (
 	"crypto/rsa"

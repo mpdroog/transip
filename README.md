@@ -5,6 +5,8 @@ Small library in Golang that implements:
 * DomainService/getInfo
 * DomainService/batchGetInfo
 * DomainService/setDnsEntries
+* DomainService/batchCheckAvailability
+* DomainService/checkAvailability
 
 If you need other methods on the TransIP API be free to fork my
 code and I'll merge it with love. :)
@@ -22,12 +24,11 @@ package main
 
 import (
 	"github.com/mpdroog/transip"
-	"github.com/mpdroog/transip/creds"
 	"fmt"
 )
 
 func printDomainInfo(username, privKeyPath string) error {
-	creds := creds.Client{
+	creds := transip.Client{
 		Login:     username,
 		ReadWrite: false,
 	}
@@ -42,7 +43,7 @@ func printDomainInfo(username, privKeyPath string) error {
 		return err
 	}
 	fmt.Printf("\t%+v\n\n", domain)
-    return nil
+	return nil
 }
 ```
 
@@ -52,12 +53,11 @@ package main
 
 import (
 	"github.com/mpdroog/transip"
-	"github.com/mpdroog/transip/creds"
 	"fmt"
 )
 
 func printDomainNames(username, privKeyPath string) error {
-	creds := creds.Client{
+	creds := transip.Client{
 		Login:     username,
 		ReadWrite: false,
 	}
@@ -71,7 +71,7 @@ func printDomainNames(username, privKeyPath string) error {
 	if err != nil {
 		return err
 	}
-	domains, err := domainService.Domains(domainNames.Item)
+	domains, err := domainService.Domains(domainNames)
 	if err != nil {
 		return err
 	}
@@ -91,13 +91,11 @@ package main
 
 import (
 	"github.com/mpdroog/transip"
-	"github.com/mpdroog/transip/creds"
-	"github.com/mpdroog/transip/soap"
 	"fmt"
 )
 
 func overWriteDnsEntries(username, privKeyPath, domain string) error {
-	creds := creds.Client{
+	creds := transip.Client{
 		Login:     username,
 		ReadWrite: true,
 	}
@@ -107,12 +105,70 @@ func overWriteDnsEntries(username, privKeyPath, domain string) error {
 	}
 
 	// 360 = 6min (TTL in seconds)
-	recordSet := []soap.DomainDNSentry{
+	recordSet := []transip.DomainDNSentry{
 		{Name: "@", Expire: 360, Type: "A", Content: "127.0.0.1"},
 	}
 
 	domainService := transip.DomainService{creds}
 	err := domainService.SetDNSEntries(domain, recordSet)
 	return err
+}
+```
+
+Check availability of a domain
+```go
+package main
+
+import (
+	"github.com/mpdroog/transip"
+	"fmt"
+)
+
+func checkAvailability(username, privKeyPath, domain string) (string, error) {
+	creds := transip.Client{
+        Login:     username,
+        ReadWrite: false,
+    }
+    if err := creds.SetPrivateKeyFromPath(privKeyPath); err != nil {
+        return "", fmt.Errorf("could not load private key from path %s: %s",
+            privKeyPath, err)
+    }
+
+    domainService := transip.DomainService{creds}
+	res, err := domainService.CheckAvailability(domain)
+	if err != nil {
+		return "", err
+	}
+
+    return res, nil
+}
+```
+
+Check availability of a batch of domains
+```go
+package main
+
+import (
+	"github.com/mpdroog/transip"
+	"fmt"
+)
+
+func checkAvailability(username, privKeyPath string, domains []string) ([]transip.DomainCheckResult, error) {
+	creds := transip.Client{
+        Login:     username,
+        ReadWrite: false,
+    }
+    if err := creds.SetPrivateKeyFromPath(privKeyPath); err != nil {
+        return nil, fmt.Errorf("could not load private key from path %s: %s",
+            privKeyPath, err)
+    }
+
+    domainService := transip.DomainService{creds}
+	res, err := domainService.BatchCheckAvailability(domains)
+	if err != nil {
+		return nil, err
+	}
+
+    return res, nil
 }
 ```

@@ -1,7 +1,7 @@
 // Package soap implements SOAP-logic for the TransIP API.
 // decode.go contains the logic to convert the XML to the corresponding
 // datastructures
-package soap
+package transip
 
 import (
 	"bytes"
@@ -19,12 +19,16 @@ type SOAPFault struct {
 	Detail string `xml:"detail,omitempty"`
 }
 
-type DomainNames struct {
+type domainNames struct {
 	Item []string `xml:"item"`
 }
 
+type availability struct {
+	Item string `xml:"return"`
+}
+
 type Domains struct {
-    Domains []Domain `xml:"item"`
+	Domains []Domain `xml:"item"`
 }
 
 type DomainNameserver struct {
@@ -67,9 +71,19 @@ type Domain struct {
 	RenewalDate      string `xml:"renewalDate"`
 }
 
+type domainCheckResults struct {
+	Results []DomainCheckResult `xml:"item"`
+}
+
+type DomainCheckResult struct {
+	DomainName string   `xml:"domainName"`
+	Status     string   `xml:"status"`
+	Actions    []string `xml:"actions>item"`
+}
+
 // Convert rawbody to XML and subtract the 'body' from the
 // SOAP-envelope into the struct given with out
-func Decode(rawbody []byte, out interface{}) error {
+func decode(rawbody []byte, out interface{}) error {
 	dec := xml.NewDecoder(bytes.NewReader(rawbody))
 
 	for {
@@ -83,6 +97,12 @@ func Decode(rawbody []byte, out interface{}) error {
 
 		switch se := tok.(type) {
 		case xml.StartElement:
+			if se.Name.Local == "checkAvailabilityResponse" {
+				// Start readin'!
+				if e := dec.DecodeElement(out, &se); e != nil {
+					return e
+				}
+			}
 			if se.Name.Local == "return" {
 				// Start readin'!
 				if e := dec.DecodeElement(out, &se); e != nil {
