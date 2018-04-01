@@ -19,8 +19,12 @@ type SOAPFault struct {
 	Detail string `xml:"detail,omitempty"`
 }
 
-type Domains struct {
+type DomainNames struct {
 	Item []string `xml:"item"`
+}
+
+type Domains struct {
+    Domains []Domain `xml:"item"`
 }
 
 type DomainNameserver struct {
