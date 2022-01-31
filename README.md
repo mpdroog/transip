@@ -1,3 +1,9 @@
+SOAP V5 API Documentation (deprecated)
+
+If you currently use the SOAP API, you may still access the documentation by clicking on LINK. It is strongly advised to switch to the new REST API because the SOAP API will be discontinued in the coming future.
+
+LINK: https://api.transip.nl/docs/transip.nl/package-Transip.html
+
 TransIP API
 ==================
 Small library in Golang that implements:
